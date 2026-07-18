@@ -9,6 +9,6 @@ RUN npm config set registry https://nexus.hedej.lge.com/repository/npm-group/ --
     npm install -f
 
 COPY . .
-EXPOSE 4000
+EXPOSE 8080
 RUN ln -sf /dev/stdout /usr/src/app/access.log && ln -sf /dev/stderr /usr/src/app/error.log
 CMD [ "npm", "start" ]

@@ -2,7 +2,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 
-const PORT = 8080;
+const PORT = 4000;
 
 // Map file extensions to content types
 const MIME_TYPES = {

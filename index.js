@@ -54,6 +54,6 @@ const server = http.createServer((req, res) => {
     });
 });
 
-server.listen(PORT, () => {
-    console.log(`Static file server started on port ${PORT}`);
+server.listen(PORT, "0.0.0.0", () => {
+    console.log(`Static file server started on 0.0.0.0:${PORT}`);
 });

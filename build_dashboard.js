@@ -281,6 +281,12 @@ regions.forEach(region => {
   rowsList.forEach(row => {
     row.y25 = getAggregatesForRaw(row.y25_raw, row.type, row.index);
     row.y24 = getAggregatesForRaw(row.y24_raw, row.type, row.index);
+    
+    // Fallback row.y25 to row.y25_prev if row.y25 has no values but y25_prev exists
+    const hasY25Val = row.y25 && row.y25.some(v => v !== null && v !== 0);
+    if (!hasY25Val && row.y25_prev && row.y25_prev.some(v => v !== null && v !== 0)) {
+      row.y25 = [...row.y25_prev];
+    }
   });
   
   computeRatios(rowsList, 'y25');
@@ -331,6 +337,12 @@ regions.forEach(region => {
         }
       }
     });
+
+    // Fallback sumRow.y25 to sumRow.y25_prev if sumRow.y25 is empty
+    const hasSumY25 = sumRow.y25.some(v => v !== null && v !== 0);
+    if (!hasSumY25 && sumRow.y25_prev.some(v => v !== null && v !== 0)) {
+      sumRow.y25 = [...sumRow.y25_prev];
+    }
     
     for (let c = 0; c < 18; c++) {
       const v26 = sumRow.y26[c];

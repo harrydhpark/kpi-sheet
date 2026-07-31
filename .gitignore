@@ -4,3 +4,4 @@ node_modules/
 .agents/
 *.xlsx
 firepit-log.txt
+.firebase/

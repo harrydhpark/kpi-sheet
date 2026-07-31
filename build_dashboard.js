@@ -911,8 +911,8 @@ const htmlTemplate = `<!DOCTYPE html>
         
         function updateView() {
             const meta = regionMeta[currentRegion];
-            const pageTitle = (currentRegion === 'EU') ? 'EUROPE/CIS' : meta.kr;
-            const bannerTitle = (currentRegion === 'EU') ? '유럽' : meta.kr;
+            const pageTitle = (currentRegion === 'EU') ? 'EUROPE/CIS' : (currentRegion === 'CIS') ? 'CIS' : meta.kr;
+            const bannerTitle = (currentRegion === 'EU') ? '유럽' : (currentRegion === 'CIS') ? 'CIS' : meta.kr;
             document.getElementById('page-indicator').innerText = \`\${pageTitle} TV KPI Dashboard\`;
             document.getElementById('banner-title').innerText = \`\${bannerTitle} TV Biz. KPI Monitoring Dashboard\`;
             

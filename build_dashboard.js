@@ -494,7 +494,7 @@ console.log("=== STEP 3: Compiling index.html with Tone & Manner ===");
 const regionMeta = {
   'EU': { en: 'Europe HQ (유럽 본부)', kr: 'EUROPE/CIS' },
   'LGEAG': { en: 'Austria (오스트리아)', kr: '오스트리아 지점' },
-  'LGEBN': { en: 'Benelux (베네룩스)', kr: '베네룩스 지점' },
+  'LGEBN': { en: 'Benelux (베네룩스)', kr: '베네룩스 법인' },
   'LGECK': { en: 'Czech (체코)', kr: '체코 법인' },
   'LGEDG': { en: 'Germany (독일)', kr: '독일 법인' },
   'Swiss': { en: 'Switzerland (스위스)', kr: '스위스 지점' },
@@ -502,15 +502,15 @@ const regionMeta = {
   'LGEFS': { en: 'France (프랑스)', kr: '프랑스 법인' },
   'LGEHS': { en: 'Greece (그리스)', kr: '그리스 법인' },
   'LGEIS': { en: 'Italy (이탈리아)', kr: '이탈리아 법인' },
-  'LGELA': { en: 'Baltics (발트 3국)', kr: '발트 지점' },
+  'LGELA': { en: 'Latvia (라트비아)', kr: '라트비아 지점' },
   'LGEMK': { en: 'Hungary (헝가리)', kr: '헝가리 법인' },
   'LGEPL': { en: 'Poland (폴란드)', kr: '폴란드 법인' },
-  'LGEPT': { en: 'Portugal (포르투갈)', kr: '포르투갈 지점' },
+  'LGEPT': { en: 'Portugal (포르투갈)', kr: '포르투갈 법인' },
   'LGERO': { en: 'Romania (루마니아)', kr: '루마니아 지점' },
   'LGESW': { en: 'Sweden (스웨덴)', kr: '스웨덴 법인' },
   'LGEUK': { en: 'United Kingdom (영국)', kr: '영국 법인' },
   'CIS': { en: 'CIS HQ (러시아/CIS 본부)', kr: '유라시아 전체 (HQ)' },
-  'LGEAK': { en: 'Kazakhstan (알마티)', kr: '알마티 법인' },
+  'LGEAK': { en: 'Kazakhstan (카자흐스탄)', kr: '카자흐스탄 법인' },
   'LGERA': { en: 'Russia (러시아)', kr: '러시아 법인' },
   'LGEUR': { en: 'Ukraine (우크라이나)', kr: '우크라이나 지점' }
 };

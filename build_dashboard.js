@@ -562,10 +562,12 @@ const htmlTemplate = `<!DOCTYPE html>
         .sidebar-item.active { background-color: rgba(255, 255, 255, 0.1); border-right: 4px solid #ffffff; }
         .country-node.active > button { background-color: rgba(255, 255, 255, 0.05); color: #ffffff; }
         html, body { overflow-x: hidden; width: 100%; }
+        .table-container { position: relative; overflow: auto; max-height: 650px; }
         .sticky-col { position: sticky; left: 0; background-color: #ffffff; z-index: 10; }
-        .sticky-col-header { position: sticky; left: 0; z-index: 20; }
-        .table-container { position: relative; overflow-x: auto; }
-        th { position: sticky; top: 0; background-color: #051c2c; color: #ffffff; z-index: 15; }
+        tr.bg-slate-50\/50 .sticky-col, tr.bg-slate-50\/30 .sticky-col, tr.bg-slate-50\/20 .sticky-col { background-color: #f8fafc; }
+        tr:hover .sticky-col { background-color: #f1f5f9; }
+        .sticky-col-header { position: sticky; left: 0; top: 0; background-color: #051c2c; color: #ffffff; z-index: 30; }
+        th { position: sticky; top: 0; background-color: #051c2c; color: #ffffff; z-index: 20; }
     </style>
 </head>
 <body class="flex min-h-screen">

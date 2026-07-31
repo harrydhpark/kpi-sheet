@@ -627,7 +627,7 @@ const htmlTemplate = `<!DOCTYPE html>
             <!-- Welcome Banner -->
             <div class="bg-primary text-white p-8 rounded-lg shadow-md relative overflow-hidden flex-shrink-0">
                 <div class="relative z-10">
-                    <h2 class="text-3xl font-headline font-bold mb-3" id="banner-title">유럽/CIS TV Biz. KPI Monitoring Dashboard</h2>
+                    <h2 class="text-3xl font-headline font-bold mb-3" id="banner-title">유럽 TV Biz. KPI Monitoring Dashboard</h2>
                     <p class="text-xs text-white/70 leading-relaxed max-w-4xl" id="banner-desc">유럽 및 CIS 주요 법인/지점의 TV 사업 핵심 실적 지표(수량, 재고, 손익, Market Share)를 모니터링하는 인터랙티브 대시보드입니다. 좌측 법인/지점 목록에서 법인/지점을 선택하면 Excel 수식 엔진에 의해 산출된 실적 및 YoY 전년비 분석 결과가 실시간으로 로드됩니다.</p>
                 </div>
                 <div class="absolute -right-24 -bottom-24 w-80 h-80 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
@@ -911,8 +911,10 @@ const htmlTemplate = `<!DOCTYPE html>
         
         function updateView() {
             const meta = regionMeta[currentRegion];
-            document.getElementById('page-indicator').innerText = \`\${meta.kr} TV KPI Dashboard\`;
-            document.getElementById('banner-title').innerText = \`\${meta.kr} TV Biz. KPI Monitoring Dashboard\`;
+            const pageTitle = (currentRegion === 'EU') ? 'EUROPE/CIS' : meta.kr;
+            const bannerTitle = (currentRegion === 'EU') ? '유럽' : meta.kr;
+            document.getElementById('page-indicator').innerText = \`\${pageTitle} TV KPI Dashboard\`;
+            document.getElementById('banner-title').innerText = \`\${bannerTitle} TV Biz. KPI Monitoring Dashboard\`;
             
             const rows = kpiData[currentRegion] || [];
             

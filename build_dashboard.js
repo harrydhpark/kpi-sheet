@@ -1003,7 +1003,9 @@ const htmlTemplate = `<!DOCTYPE html>
                 }
                 
                 let badgeText = yoyStr;
-                if (diffStr && yoy !== null) {
+                if (def.index === 59 && diffStr) {
+                    badgeText = diffStr;
+                } else if (diffStr && yoy !== null) {
                     badgeText = diffStr + ' (' + yoyStr + ')';
                 }
                 

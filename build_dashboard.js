@@ -500,7 +500,7 @@ const regionMeta = {
   'Swiss': { en: 'Switzerland (스위스)', kr: '스위스 지점' },
   'LGEES': { en: 'Spain (스페인)', kr: '스페인 법인' },
   'LGEFS': { en: 'France (프랑스)', kr: '프랑스 법인' },
-  'LGEHS': { en: 'Greece (그리스)', kr: '그리스 법인' },
+  'LGEHS': { en: 'Greece (그리스)', kr: '그리스 지점' },
   'LGEIS': { en: 'Italy (이탈리아)', kr: '이탈리아 법인' },
   'LGELA': { en: 'Latvia (라트비아)', kr: '라트비아 지점' },
   'LGEMK': { en: 'Hungary (헝가리)', kr: '헝가리 법인' },

@@ -492,7 +492,7 @@ function computeRatios(rowList, yearKey) {
 console.log("=== STEP 3: Compiling index.html with Tone & Manner ===");
 
 const regionMeta = {
-  'EU': { en: 'Europe HQ (유럽 본부)', kr: '유럽 전체 (HQ)' },
+  'EU': { en: 'Europe HQ (유럽 본부)', kr: 'EUROPE/CIS' },
   'LGEAG': { en: 'Austria (오스트리아)', kr: '오스트리아 지점' },
   'LGEBN': { en: 'Benelux (베네룩스)', kr: '베네룩스 지점' },
   'LGECK': { en: 'Czech (체코)', kr: '체코 법인' },
@@ -576,7 +576,7 @@ const htmlTemplate = `<!DOCTYPE html>
                 <span class="material-symbols-outlined text-white/80">insights</span>
                 <h1 class="text-xl font-bold tracking-tight">TV KPI Portal</h1>
             </div>
-            <p class="text-[10px] text-white/50 uppercase tracking-[0.2em] font-medium">LGE Europe TV Portal</p>
+            <p class="text-[10px] text-white/50 uppercase tracking-[0.2em] font-medium">TV EUROPE/CIS TV PORTAL</p>
         </div>
         
         <nav class="flex-1 py-6 space-y-4 overflow-y-auto" id="sidebar-nav">
@@ -604,7 +604,7 @@ const htmlTemplate = `<!DOCTYPE html>
         <!-- Top Bar Header -->
         <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-12 sticky top-0 z-40">
             <div class="flex items-center gap-6">
-                <span class="text-xs font-bold tracking-widest text-slate-400 uppercase">Europe TV KPI Portal</span>
+                <span class="text-xs font-bold tracking-widest text-slate-400 uppercase">EUROPE/CIS TV PORTAL</span>
                 <div class="h-4 w-px bg-slate-200"></div>
                 <p class="text-sm font-semibold text-primary" id="page-indicator">로딩 중...</p>
             </div>
@@ -627,8 +627,8 @@ const htmlTemplate = `<!DOCTYPE html>
             <!-- Welcome Banner -->
             <div class="bg-primary text-white p-8 rounded-lg shadow-md relative overflow-hidden flex-shrink-0">
                 <div class="relative z-10">
-                    <h2 class="text-3xl font-headline font-bold mb-3" id="banner-title">유럽 TV 사업 KPI 모니터링 포털</h2>
-                    <p class="text-xs text-white/70 leading-relaxed max-w-4xl" id="banner-desc">본 포털은 유럽 및 CIS 주요 지사의 TV 사업 핵심 실적 지표(수량, 재고, 손익, Market Share)를 모니터링하는 인터랙티브 대시보드입니다. 좌측 지사 목록에서 법인을 선택하면 Excel 수식 엔진에 의해 산출된 실적 및 YoY 전년비 분석 결과가 실시간으로 로드됩니다.</p>
+                    <h2 class="text-3xl font-headline font-bold mb-3" id="banner-title">유럽/CIS TV Biz. KPI Monitoring Dashboard</h2>
+                    <p class="text-xs text-white/70 leading-relaxed max-w-4xl" id="banner-desc">유럽 및 CIS 주요 법인/지점의 TV 사업 핵심 실적 지표(수량, 재고, 손익, Market Share)를 모니터링하는 인터랙티브 대시보드입니다. 좌측 법인/지점 목록에서 법인/지점을 선택하면 Excel 수식 엔진에 의해 산출된 실적 및 YoY 전년비 분석 결과가 실시간으로 로드됩니다.</p>
                 </div>
                 <div class="absolute -right-24 -bottom-24 w-80 h-80 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
             </div>
@@ -912,7 +912,7 @@ const htmlTemplate = `<!DOCTYPE html>
         function updateView() {
             const meta = regionMeta[currentRegion];
             document.getElementById('page-indicator').innerText = \`\${meta.kr} TV KPI Dashboard\`;
-            document.getElementById('banner-title').innerText = \`\${meta.kr} TV KPI 모니터링 포털\`;
+            document.getElementById('banner-title').innerText = \`\${meta.kr} TV Biz. KPI Monitoring Dashboard\`;
             
             const rows = kpiData[currentRegion] || [];
             

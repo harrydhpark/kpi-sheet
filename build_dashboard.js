@@ -290,6 +290,8 @@ regions.forEach(region => {
     }
   });
   
+  computeRatios(rowsList, 'y26');
+  computeRatios(rowsList, 'y25_prev');
   computeRatios(rowsList, 'y25');
   computeRatios(rowsList, 'y24');
   
@@ -447,21 +449,31 @@ function getAggregatesForRaw(vals, type, sheetRowNumber) {
 function computeRatios(rowList, yearKey) {
   const getRow = (idx) => rowList.find(r => r.index === idx);
   
-  const divRows = (numRowIdx, denRowIdx, targetRowIdx) => {
+  const divRows = (numRowIdx, denRowIdx, targetRowIdx, scale = 1) => {
     const target = getRow(targetRowIdx);
     const num = getRow(numRowIdx);
     const den = getRow(denRowIdx);
     if (!target) return;
     for (let c = 0; c < 18; c++) {
-      const nVal = (num && num[yearKey][c] !== null) ? num[yearKey][c] : 0;
-      const dVal = (den && den[yearKey][c] !== null) ? den[yearKey][c] : 0;
-      target[yearKey][c] = (dVal && dVal !== 0) ? (nVal / dVal) : null;
+      const nVal = (num && num[yearKey] && num[yearKey][c] !== null) ? num[yearKey][c] : 0;
+      const dVal = (den && den[yearKey] && den[yearKey][c] !== null) ? den[yearKey][c] : 0;
+      target[yearKey][c] = (dVal && dVal !== 0) ? (nVal / dVal) * scale : null;
     }
   };
   
   divRows(25, 24, 26);
   divRows(22, 19, 69);
   divRows(25, 24, 71);
+  
+  // G.ASP ($) rows: Gross Sales / Sell-in Qty * 1000 (weighted average)
+  divRows(38, 19, 41, 1000);
+  divRows(39, 22, 42, 1000);
+  divRows(40, 23, 43, 1000);
+  
+  // N.ASP ($) rows: Net Sales / Sell-in Qty * 1000 (weighted average)
+  divRows(47, 19, 53, 1000);
+  divRows(48, 22, 54, 1000);
+  divRows(49, 23, 55, 1000);
   
   const gross = getRow(38);
   const net = getRow(47);

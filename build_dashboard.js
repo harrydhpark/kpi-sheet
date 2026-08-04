@@ -3,7 +3,8 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const workspaceDir = "d:\\TV 유럽영업\\15. AX Task\\2026 AX 실행과제\\06. KPI Sheet";
-const originalFile = path.join(workspaceDir, "26년_유럽+CIS_KPI_260712 1.xlsx");
+const targetFilename = fs.existsSync(path.join(workspaceDir, "26년_유럽+CIS_KPI_2026.xlsx")) ? "26년_유럽+CIS_KPI_2026.xlsx" : "26년_유럽+CIS_KPI_260712 1.xlsx";
+const originalFile = path.join(workspaceDir, targetFilename);
 
 const tempDir = "C:\\Users\\harry.park\\AppData\\Local\\Temp";
 const tempInput = path.join(tempDir, "temp_input.xlsx");
@@ -389,16 +390,17 @@ function getAggregatesForRaw(vals, type, sheetRowNumber) {
   for (let m = 0; m < 6; m++) result[m] = vals[m];
   for (let m = 6; m < 12; m++) result[m + 1] = vals[m];
   
-  // Custom Stock-like aggregation for 전시수량 (rows 73 to 78)
+  // Custom Stock-like aggregation for 전시수량 (rows 73 to 78) & 유통재고 (rows 28, 29, 30)
   const isDisplayQty = sheetRowNumber !== undefined && sheetRowNumber >= 73 && sheetRowNumber <= 78;
+  const isStockQty = sheetRowNumber !== undefined && (sheetRowNumber === 28 || sheetRowNumber === 29 || sheetRowNumber === 30);
   
-  if (isDisplayQty) {
+  if (isDisplayQty || isStockQty) {
     result[6] = vals[5];   // 상반기 -> 6월
     result[13] = vals[2];  // 1Q -> 3월
     result[14] = vals[5];  // 2Q -> 6월
-    result[15] = vals[8];  // 3Q -> 9월
-    result[16] = vals[11]; // 4Q -> 12월
-    result[17] = vals[11]; // TTL -> 12월
+    result[15] = vals[8];  // 3Q -> 9월 (raw vals 12개월 배열 인덱스 8)
+    result[16] = vals[11]; // 4Q -> 12월 (raw vals 12개월 배열 인덱스 11)
+    result[17] = vals[11]; // TTL -> 12월 (raw vals 12개월 배열 인덱스 11)
   } else if (type === 'n' || type === 'm') {
     const q1 = (vals[0] || 0) + (vals[1] || 0) + (vals[2] || 0);
     const q2 = (vals[3] || 0) + (vals[4] || 0) + (vals[5] || 0);
@@ -618,9 +620,9 @@ const htmlTemplate = `<!DOCTYPE html>
         <!-- Top Bar Header -->
         <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-12 sticky top-0 z-40">
             <div class="flex items-center gap-6">
-                <span class="text-xs font-bold tracking-widest text-slate-400 uppercase">EUROPE/CIS TV PORTAL</span>
+                <span class="text-xs font-bold tracking-widest text-slate-400 uppercase" id="header-category-title">EUROPE/CIS TV KPI Dashboard</span>
                 <div class="h-4 w-px bg-slate-200"></div>
-                <p class="text-sm font-semibold text-primary" id="page-indicator">로딩 중...</p>
+                <p class="text-sm font-semibold text-primary" id="page-indicator">26년 6월 실적 + 7월차 이동</p>
             </div>
             <div class="flex items-center gap-6">
                 <!-- Year Selector Tabs -->
@@ -927,7 +929,8 @@ const htmlTemplate = `<!DOCTYPE html>
             const meta = regionMeta[currentRegion];
             const pageTitle = (currentRegion === 'EU') ? 'EUROPE/CIS' : (currentRegion === 'CIS') ? 'CIS' : meta.kr;
             const bannerTitle = (currentRegion === 'EU') ? '유럽' : (currentRegion === 'CIS') ? 'CIS' : meta.kr;
-            document.getElementById('page-indicator').innerText = \`\${pageTitle} TV KPI Dashboard\`;
+            document.getElementById('header-category-title').innerText = \`\${pageTitle} TV KPI Dashboard\`;
+            document.getElementById('page-indicator').innerText = '26년 6월 실적 + 7월차 이동';
             document.getElementById('banner-title').innerText = \`\${bannerTitle} TV Biz. KPI Monitoring Dashboard\`;
             
             const rows = kpiData[currentRegion] || [];
@@ -1037,7 +1040,7 @@ const htmlTemplate = `<!DOCTYPE html>
             });
         }
 
-                function renderTable(tableId, rows) {
+        function renderTable(tableId, rows) {
             const table = document.getElementById(tableId);
             if (!table) return;
             table.innerHTML = '';
@@ -1051,6 +1054,13 @@ const htmlTemplate = `<!DOCTYPE html>
             });
             html += '</tr></thead><tbody>';
             
+            // Stock (snapshot) row indices: 유통재고 TTL(28), 신모델 수량(29), 구모델 수량(30)
+            // These use end-of-period inventory instead of cumulative sums.
+            // colHeaders index mapping: 상반기=6, 1Q=13, 2Q=14, 3Q=15, 4Q=16, TTL=17
+            // → 상반기=Jun(5), 1Q=Mar(2), 2Q=Jun(5), 3Q=Sep(9), 4Q=Dec(12), TTL=Dec(12)
+            const stockRowIndices = new Set([28, 29, 30]);
+            const stockColMap = { 6: 5, 13: 2, 14: 5, 15: 9, 16: 12, 17: 12 };
+            
             // Rows
             rows.forEach((row, idx) => {
                 const { text, indent } = getRowDisplayNameAndIndent(row.labels);
@@ -1058,6 +1068,7 @@ const htmlTemplate = `<!DOCTYPE html>
                 
                 const valArray = currentYear === 2026 ? row.y26 : row.y25;
                 const prevValArray = currentYear === 2026 ? row.y25 : row.y24;
+                const isStockRow = stockRowIndices.has(row.index);
                 
                 const indentClass = \`pl-\${indent * 4 + 4}\`;
                 const textStyle = indent === 0 ? 'font-bold text-primary text-xs' : (indent === 1 ? 'font-medium text-slate-700 text-[11px]' : 'text-slate-600 text-[11px]');
@@ -1085,7 +1096,9 @@ const htmlTemplate = `<!DOCTYPE html>
                 html += \`<tr class="\${subRowClass} hidden bg-slate-50/20 border-b border-slate-50">\`;
                 html += \`<td class="sticky-col px-4 py-1.5 border-r border-slate-100 \${childIndentClass} \${childTextStyle}" style="min-width: 260px; left:0;">└ 전년 (Prev Year)</td>\`;
                 for (let c = 0; c < 18; c++) {
-                    const val = prevValArray ? prevValArray[c] : null;
+                    // Stock rows: use end-of-period snapshot index instead of cumulative column
+                    const srcIdx = (isStockRow && stockColMap[c] !== undefined) ? stockColMap[c] : c;
+                    const val = prevValArray ? prevValArray[srcIdx] : null;
                     const valStr = formatVal(val, row.type, text, row.index);
                     const tdBg = colHeaders[c] === '상반기' || colHeaders[c] === 'TTL' || colHeaders[c].includes('Q') ? 'bg-slate-50/30 font-semibold' : '';
                     html += \`<td class="text-right px-2 py-1.5 border-r border-slate-100 \${tdBg} \${childTextStyle}">\${valStr}</td>\`;
@@ -1096,8 +1109,10 @@ const htmlTemplate = `<!DOCTYPE html>
                 html += \`<tr class="\${subRowClass} hidden bg-slate-50/20 border-b border-slate-100">\`;
                 html += \`<td class="sticky-col px-4 py-1.5 border-r border-slate-100 \${childIndentClass} \${childTextStyle}" style="min-width: 260px; left:0;">└ 전년비 (YoY Diff)</td>\`;
                 for (let c = 0; c < 18; c++) {
-                    const valCur = valArray ? valArray[c] : null;
-                    const valPrev = prevValArray ? prevValArray[c] : null;
+                    // Stock rows: compare same end-of-period snapshot for both current and prev year
+                    const srcIdx = (isStockRow && stockColMap[c] !== undefined) ? stockColMap[c] : c;
+                    const valCur = valArray ? valArray[srcIdx] : null;
+                    const valPrev = prevValArray ? prevValArray[srcIdx] : null;
                     const diff = (valCur !== null && valPrev !== null) ? (valCur - valPrev) : null;
                     const valStr = formatDiffVal(diff, row.type, text, row.index);
                     const tdBg = colHeaders[c] === '상반기' || colHeaders[c] === 'TTL' || colHeaders[c].includes('Q') ? 'bg-slate-50/30 font-semibold' : '';

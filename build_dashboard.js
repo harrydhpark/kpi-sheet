@@ -344,6 +344,19 @@ regions.forEach(region => {
     if (!hasSumY25 && sumRow.y25_prev.some(v => v !== null && v !== 0)) {
       sumRow.y25 = [...sumRow.y25_prev];
     }
+
+    // Special CPSI Fallback for Swiss OLED (24.1) and QNED (24.2)
+    if (region === 'Swiss') {
+      if (newIndex === 24.1 && !sumRow.y25_prev.some(v => v !== null && v !== 0)) {
+        const swissOled2025Raw = [2836, 2891, 2184, 2058, 2556, 5614, 3754, 0, 3639, 2289, 2293, 2798, 32912];
+        sumRow.y25_prev = getAggregatesForRaw(swissOled2025Raw, 'n');
+        sumRow.y25 = [...sumRow.y25_prev];
+      } else if (newIndex === 24.2 && !sumRow.y25_prev.some(v => v !== null && v !== 0)) {
+        const swissQned2025Raw = [461, 385, 505, 754, 954, 2036, 1296, 0, 1296, 727, 822, 569, 9805];
+        sumRow.y25_prev = getAggregatesForRaw(swissQned2025Raw, 'n');
+        sumRow.y25 = [...sumRow.y25_prev];
+      }
+    }
     
     for (let c = 0; c < 18; c++) {
       const v26 = sumRow.y26[c];

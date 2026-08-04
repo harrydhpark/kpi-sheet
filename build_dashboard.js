@@ -465,15 +465,15 @@ function computeRatios(rowList, yearKey) {
   divRows(22, 19, 69);
   divRows(25, 24, 71);
   
-  // G.ASP ($) rows: Gross Sales / Sell-in Qty * 1000 (weighted average)
-  divRows(38, 19, 41, 1000);
-  divRows(39, 22, 42, 1000);
-  divRows(40, 23, 43, 1000);
+  // G.ASP ($) rows: Gross Sales / Sell-in Qty (exact dollars)
+  divRows(38, 19, 41);
+  divRows(39, 22, 42);
+  divRows(40, 23, 43);
   
-  // N.ASP ($) rows: Net Sales / Sell-in Qty * 1000 (weighted average)
-  divRows(47, 19, 53, 1000);
-  divRows(48, 22, 54, 1000);
-  divRows(49, 23, 55, 1000);
+  // N.ASP ($) rows: Net Sales / Sell-in Qty (exact dollars)
+  divRows(47, 19, 53);
+  divRows(48, 22, 54);
+  divRows(49, 23, 55);
   
   const gross = getRow(38);
   const net = getRow(47);

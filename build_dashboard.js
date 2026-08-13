@@ -1026,13 +1026,13 @@ const htmlTemplate = `<!DOCTYPE html>
                         // 영업이익률 %: (Net Sales 1~7월 누적) & (영업이익 1~7월 누적)
                         const ns26 = netSalesRow && netSalesRow.y26 ? ((netSalesRow.y26[6] || 0) + (netSalesRow.y26[7] || 0)) : 0;
                         const op26 = opIncomeRow && opIncomeRow.y26 ? ((opIncomeRow.y26[6] || 0) + (opIncomeRow.y26[7] || 0)) : 0;
-                        val = ns26 > 0 ? (op26 / ns26) * 100 : 0;
+                        val = ns26 > 0 ? (op26 / ns26) : 0;
                         
                         const ns25 = netSalesRow && netSalesRow.y25 ? ((netSalesRow.y25[6] || 0) + (netSalesRow.y25[7] || 0)) : 0;
                         const op25 = opIncomeRow && opIncomeRow.y25 ? ((opIncomeRow.y25[6] || 0) + (opIncomeRow.y25[7] || 0)) : 0;
-                        prevVal = ns25 > 0 ? (op25 / ns25) * 100 : 0;
+                        prevVal = ns25 > 0 ? (op25 / ns25) : 0;
                         
-                        yoy = val - prevVal; // %p diff
+                        yoy = (val - prevVal) * 100; // %p diff
                     } else {
                         // Flow metrics (Net Sales, 영업이익, Sell-in, Sell-out): H1 (index 6) + Jul (index 7)
                         const val26_H1 = row.y26 ? (row.y26[6] || 0) : 0;
@@ -1058,13 +1058,13 @@ const htmlTemplate = `<!DOCTYPE html>
                         // 영업이익률 %: 2025년 연간 Net Sales & 영업이익, 2024년 연간 Net Sales & 영업이익
                         const ns25 = netSalesRow && netSalesRow.y25 ? (netSalesRow.y25[17] || 0) : 0;
                         const op25 = opIncomeRow && opIncomeRow.y25 ? (opIncomeRow.y25[17] || 0) : 0;
-                        val = ns25 > 0 ? (op25 / ns25) * 100 : 0;
+                        val = ns25 > 0 ? (op25 / ns25) : 0;
                         
                         const ns24 = netSalesRow && netSalesRow.y24 ? (netSalesRow.y24[17] || 0) : 0;
                         const op24 = opIncomeRow && opIncomeRow.y24 ? (opIncomeRow.y24[17] || 0) : 0;
-                        prevVal = ns24 > 0 ? (op24 / ns24) * 100 : 0;
+                        prevVal = ns24 > 0 ? (op24 / ns24) : 0;
                         
-                        yoy = val - prevVal; // %p diff
+                        yoy = (val - prevVal) * 100; // %p diff
                     } else {
                         // Flow metrics: TTL (index 17)
                         val = row.y25 ? row.y25[17] : null;

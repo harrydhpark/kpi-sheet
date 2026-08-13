@@ -91,7 +91,7 @@
             <div class="flex items-center gap-6">
                 <span class="text-xs font-bold tracking-widest text-slate-400 uppercase" id="header-category-title">EUROPE/CIS TV KPI Dashboard</span>
                 <div class="h-4 w-px bg-slate-200"></div>
-                <p class="text-sm font-semibold text-primary" id="page-indicator">26년 6월 실적 + 7월차 이동</p>
+                <p class="text-sm font-semibold text-primary" id="page-indicator">26년 7월 실적 + 8월차 이동</p>
             </div>
             <div class="flex items-center gap-6">
                 <!-- Year Selector Tabs -->
@@ -399,7 +399,7 @@
             const pageTitle = (currentRegion === 'EU') ? 'EUROPE/CIS' : (currentRegion === 'CIS') ? 'CIS' : meta.kr;
             const bannerTitle = (currentRegion === 'EU') ? '유럽' : (currentRegion === 'CIS') ? 'CIS' : meta.kr;
             document.getElementById('header-category-title').innerText = `${pageTitle} TV KPI Dashboard`;
-            document.getElementById('page-indicator').innerText = '26년 6월 실적 + 7월차 이동';
+            document.getElementById('page-indicator').innerText = '26년 7월 실적 + 8월차 이동';
             document.getElementById('banner-title').innerText = `${bannerTitle} TV Biz. KPI Monitoring Dashboard`;
             
             const rows = kpiData[currentRegion] || [];
@@ -444,47 +444,98 @@
                 { title: '유통재고', index: 28, unit: '대' }
             ];
             
+            const netSalesRow = rows.find(r => r.index === 50);
+            const opIncomeRow = rows.find(r => r.index === 59);
+            
             cardRowDefs.forEach(def => {
                 const row = rows.find(r => r.index === def.index);
                 if (!row) return;
                 
-                const valArray = currentYear === 2026 ? row.y26 : row.y25;
-                const yoyArray = currentYear === 2026 ? row.y26_yoy : row.y25_yoy;
-                
-                // YTD (June) logic:
-                // Flow metrics (Sell-in, Sell-out, Net Sales, 영업이익, 영업이익율) use H1 (index 6, Column R)
-                // Stock/Snapshot metrics (유통재고) use June (index 5, Column Q)
                 const isStockMetric = def.index === 28;
-                const targetIdx = isStockMetric ? 5 : 6;
-                const periodLabel = isStockMetric ? 'YTD (6월 말)' : 'YTD (6월 누적)';
+                let periodLabel = '';
+                let val = null;
+                let prevVal = null;
+                let yoy = null;
                 
-                let val = valArray ? valArray[targetIdx] : null;
-                let yoy = yoyArray ? yoyArray[targetIdx] : null;
+                if (currentYear === 2026) {
+                    // 2026: YTD 7월 누적 (or 7월 말)
+                    periodLabel = isStockMetric ? 'YTD (7월 말)' : 'YTD (7월 누적)';
+                    
+                    if (isStockMetric) {
+                        // 유통재고: 7월 (index 7)
+                        val = row.y26 ? row.y26[7] : null;
+                        prevVal = row.y25 ? row.y25[7] : null;
+                        yoy = (val !== null && prevVal !== null && prevVal !== 0) ? ((val - prevVal) / Math.abs(prevVal)) * 100 : null;
+                    } else if (def.index === 65) {
+                        // 영업이익률 %: (Net Sales 1~7월 누적) & (영업이익 1~7월 누적)
+                        const ns26 = netSalesRow && netSalesRow.y26 ? ((netSalesRow.y26[6] || 0) + (netSalesRow.y26[7] || 0)) : 0;
+                        const op26 = opIncomeRow && opIncomeRow.y26 ? ((opIncomeRow.y26[6] || 0) + (opIncomeRow.y26[7] || 0)) : 0;
+                        val = ns26 > 0 ? (op26 / ns26) * 100 : 0;
+                        
+                        const ns25 = netSalesRow && netSalesRow.y25 ? ((netSalesRow.y25[6] || 0) + (netSalesRow.y25[7] || 0)) : 0;
+                        const op25 = opIncomeRow && opIncomeRow.y25 ? ((opIncomeRow.y25[6] || 0) + (opIncomeRow.y25[7] || 0)) : 0;
+                        prevVal = ns25 > 0 ? (op25 / ns25) * 100 : 0;
+                        
+                        yoy = val - prevVal; // %p diff
+                    } else {
+                        // Flow metrics (Net Sales, 영업이익, Sell-in, Sell-out): H1 (index 6) + Jul (index 7)
+                        const val26_H1 = row.y26 ? (row.y26[6] || 0) : 0;
+                        const val26_Jul = row.y26 ? (row.y26[7] || 0) : 0;
+                        val = val26_H1 + val26_Jul;
+                        
+                        const val25_H1 = row.y25 ? (row.y25[6] || 0) : 0;
+                        const val25_Jul = row.y25 ? (row.y25[7] || 0) : 0;
+                        prevVal = val25_H1 + val25_Jul;
+                        
+                        yoy = (prevVal !== 0) ? ((val - prevVal) / Math.abs(prevVal)) * 100 : null;
+                    }
+                } else {
+                    // 2025: 연간 실적 (TTL / 12월 말) & 2024년 연간 대비
+                    periodLabel = '연간 실적';
+                    
+                    if (isStockMetric) {
+                        // 유통재고: 12월 말 (index 12)
+                        val = row.y25 ? row.y25[12] : null;
+                        prevVal = row.y24 ? row.y24[12] : null;
+                        yoy = (val !== null && prevVal !== null && prevVal !== 0) ? ((val - prevVal) / Math.abs(prevVal)) * 100 : null;
+                    } else if (def.index === 65) {
+                        // 영업이익률 %: 2025년 연간 Net Sales & 영업이익, 2024년 연간 Net Sales & 영업이익
+                        const ns25 = netSalesRow && netSalesRow.y25 ? (netSalesRow.y25[17] || 0) : 0;
+                        const op25 = opIncomeRow && opIncomeRow.y25 ? (opIncomeRow.y25[17] || 0) : 0;
+                        val = ns25 > 0 ? (op25 / ns25) * 100 : 0;
+                        
+                        const ns24 = netSalesRow && netSalesRow.y24 ? (netSalesRow.y24[17] || 0) : 0;
+                        const op24 = opIncomeRow && opIncomeRow.y24 ? (opIncomeRow.y24[17] || 0) : 0;
+                        prevVal = ns24 > 0 ? (op24 / ns24) * 100 : 0;
+                        
+                        yoy = val - prevVal; // %p diff
+                    } else {
+                        // Flow metrics: TTL (index 17)
+                        val = row.y25 ? row.y25[17] : null;
+                        prevVal = row.y24 ? row.y24[17] : null;
+                        yoy = (prevVal !== null && prevVal !== undefined && prevVal !== 0) ? ((val - prevVal) / Math.abs(prevVal)) * 100 : null;
+                    }
+                }
                 
                 let valStr = formatVal(val, row.type);
                 const yoyStr = formatYoY(yoy, row.type);
                 const yoyColor = getYoYColorClass(yoy, row.type);
                 const borderAccent = (def.index === 59 || def.index === 65) ? 'border-l-4 border-l-secondary' : 'border-l-4 border-l-teal-accent';
                 
-                // Calculate absolute change compared to previous year
+                // Calculate absolute change
                 let diffStr = '';
-                if (val !== null && val !== undefined) {
-                    const prevValArray = currentYear === 2026 ? row.y25 : row.y24;
-                    const prevVal = prevValArray ? prevValArray[targetIdx] : null;
+                if (val !== null && val !== undefined && prevVal !== null && prevVal !== undefined) {
+                    const diff = val - prevVal;
+                    const sign = diff >= 0 ? '+' : '-';
+                    const absDiff = Math.abs(diff);
                     
-                    if (prevVal !== null && prevVal !== undefined) {
-                        const diff = val - prevVal;
-                        const sign = diff >= 0 ? '+' : '-';
-                        const absDiff = Math.abs(diff);
-                        
-                        if (def.index === 50 || def.index === 59) {
-                            // Currency: Net Sales & Operating Income
-                            const absM = absDiff / 1e6;
-                            diffStr = sign + '\$' + absM.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + 'M';
-                        } else if (def.index === 19 || def.index === 24 || def.index === 28) {
-                            // Quantity: Sell-in, Sell-out, 유통재고
-                            diffStr = sign + absDiff.toLocaleString(undefined, { maximumFractionDigits: 0 });
-                        }
+                    if (def.index === 50 || def.index === 59) {
+                        // Currency: Net Sales & Operating Income
+                        const absM = absDiff / 1e6;
+                        diffStr = sign + '\$' + absM.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + 'M';
+                    } else if (def.index === 19 || def.index === 24 || def.index === 28) {
+                        // Quantity: Sell-in, Sell-out, 유통재고
+                        diffStr = sign + absDiff.toLocaleString(undefined, { maximumFractionDigits: 0 });
                     }
                 }
                 

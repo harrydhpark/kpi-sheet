@@ -82,3 +82,8 @@ git -c credential.helper='' push gitlab main --progress 2>&1
 - **`.sticky-col`**: `position: sticky; left: 0; z-index: 10;` (행 배경색 `bg-white`, `bg-slate-50/50`, `hover:bg-slate-100/70`과 동적 매칭)
 - **`.sticky-col-header`**: `position: sticky; left: 0; top: 0; background-color: #051c2c; color: #ffffff; z-index: 30;` (최상단-좌측 코너 셀 고정)
 
+### 5. KPI Sheet 엑셀 데이터 갱신 시 H16 셀 드롭다운 목록 보존 필수
+- openpyxl 라이브러리를 사용해 `26년_유럽+CIS_KPI_2026.xlsx`를 저장하면 엑셀의 Data Validation Extension이 삭제되는 현상이 있습니다.
+- 따라서 매출장, CPSI 등 엑셀 데이터 파싱 오버레이 반영 후에는 **반드시 `restore_h16_dropdown.py`를 실행하여 `KPI(26년)` 및 `KPI(25년)` 시트 H16 셀의 법인/지점 선택 드롭다운 목록(Data Validation List: 21개 법인/지점/본부)을 복원**해야 합니다.
+
+

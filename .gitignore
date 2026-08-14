@@ -3,5 +3,7 @@ node_modules/
 *.log
 .agents/
 *.xlsx
+*.xlsb
+Raw data/
 firepit-log.txt
 .firebase/

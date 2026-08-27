@@ -86,4 +86,16 @@ git -c credential.helper='' push gitlab main --progress 2>&1
 - openpyxl 라이브러리를 사용해 `26년_유럽+CIS_KPI_2026.xlsx`를 저장하면 엑셀의 Data Validation Extension이 삭제되는 현상이 있습니다.
 - 따라서 매출장, CPSI 등 엑셀 데이터 파싱 오버레이 반영 후에는 **반드시 `restore_h16_dropdown.py`를 실행하여 `KPI(26년)` 및 `KPI(25년)` 시트 H16 셀의 법인/지점 선택 드롭다운 목록(Data Validation List: 21개 법인/지점/본부)을 복원**해야 합니다.
 
+### 6. 매출장 신모델 및 구모델 분류 기준 표준
+- **신모델 (New Model)**: `ReleaseYear == 'Y26'` (Col AC `출시 연도`)
+- **구모델 (Old Model)**: `ReleaseYear`가 **`'Y26'`(신모델)과 `'X'`/`'x'`(불용/기타/비대상)를 제외한 나머지(Y25, Y24, Y23, Y22 등)** 유효 연도 모델
+- **대상 시트 반영**:
+  - `매출장Raw(신)`: 신모델 데이터 집계 오버레이 (EU/CIS 합계는 `SUMIF` 수식 유지)
+  - `매출장Raw(구)`: 구모델 데이터 집계 오버레이 (EU/CIS 합계는 `SUMIF` 수식 유지)
+
+### 7. 네트워크 드라이브(NAS) 대용량 엑셀 작업 시 로컬 버퍼(Local SSD Temp Buffer) 필수
+- 작업 경로(`d:\TV 유럽영업\...`)는 사내 NAS 네트워크 스토리지입니다.
+- 네트워크 상의 30MB+ 대용량 엑셀을 Excel COM으로 직접 열고 `$wb.SaveAs(...)`를 실행하면 파일 잠금 및 프로세스 무한 Hang이 발생합니다.
+- 대용량 엑셀 수정 작업은 반드시 **`%TEMP%` 로컬 SSD 경로로 먼저 복사(`Copy-Item`)한 후 로컬에서 수정 및 `$wb.Save()` 저장하고, 완료 후 원본 경로로 덮어쓰기 복사**해야 합니다.
+
 

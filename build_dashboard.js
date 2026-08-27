@@ -847,7 +847,7 @@ const htmlTemplate = `<!DOCTYPE html>
                 }
                 if (rowIndex >= 53 && rowIndex <= 55) {
                     const workingVal = val / 1e6;
-                    return '\\$' + workingVal.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+                    return '\\$' + workingVal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
                 }
                 const isPnlPercent = (rowIndex >= 44 && rowIndex <= 46) || (rowIndex >= 62 && rowIndex <= 67);
                 if (isPnlPercent) {
@@ -875,7 +875,7 @@ const htmlTemplate = `<!DOCTYPE html>
             }
             if (type === 'm') {
                 if (isAsp) {
-                    return '\\$' + workingVal.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+                    return '\\$' + workingVal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
                 }
                 if (Math.abs(workingVal) >= 1e6) {
                     const valInM = workingVal / 1e6;

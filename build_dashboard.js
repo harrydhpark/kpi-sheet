@@ -883,7 +883,10 @@ const htmlTemplate = `<!DOCTYPE html>
                 }
                 return '\\$' + workingVal.toLocaleString(undefined, {maximumFractionDigits: 0});
             }
-            if (type === 'i' || isWos) {
+            if (type === 'i') {
+                return workingVal.toFixed(2);
+            }
+            if (isWos) {
                 return workingVal.toFixed(1);
             }
             return workingVal.toLocaleString(undefined, {maximumFractionDigits: 0});

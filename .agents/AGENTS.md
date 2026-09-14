@@ -1,5 +1,22 @@
 # KPI Sheet Europe — Project Rules
 
+## 멀티 에이전트 시스템 (Multi-Agent System, MAS) 운영 체계
+
+본 프로젝트는 대규모 엑셀 연산, 5대 원천 데이터 파이프라인, 단일 웹 대시보드 컴파일 및 전략 리포팅의 효율적 운영을 위해 **1 Master Orchestrator + 3대 전문 에이전트** 체계로 운영됩니다.
+
+1. **Master Orchestrator**: 전체 워크플로우 제어, 의도 분석 및 에이전트 간 핸드오프 조율 (`pipeline_status.json`)
+2. **DataOps Agent (`.agents/DATA_OPS.md`)**:
+   - 5대 원천(매출장, CPSI, 전시, 재고, MI) 사전 품질 검증(Data Quality Gate)
+   - 로컬 SSD 버퍼 복사 오버레이 및 H16 드롭다운/수식 보존 검증 (`data_validation_report.json`)
+3. **BI Analyst Agent (`.agents/BI_ANALYST.md`)**:
+   - 21개 법인 KPI 실적 다차원 분석(YoY, 신구모델 믹스, 마진율)
+   - WOS 과다/결품 이상치 조기 경보 및 경영진 보고서(`executive_report_print.html`, docx) 자동 발행 (`executive_insights.json`)
+4. **DevOps Agent (`.agents/DEVOPS.md`)**:
+   - Excel COM 재계산 및 21개 법인 JSON 추출 (`build_dashboard.js`)
+   - 단일 HTML 대시보드(`index.html`) 컴파일 무결성 검증, 로컬 프리뷰(포트 4000), Firebase 및 GitLab 안전 배포
+
+---
+
 ## Git Operations (LGE Internal GitLab)
 
 이 프로젝트는 LGE 사내 GitLab(`mod.lge.com`)을 remote로 사용합니다.

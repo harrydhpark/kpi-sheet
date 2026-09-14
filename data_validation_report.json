@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-09-14T09:01:49.597325",
+  "overall_status": "PASS",
+  "raw_sources": {
+    "sales_ledger": {
+      "status": "READY",
+      "filename": "매출장.xlsb",
+      "size_mb": 158.51,
+      "last_modified": "2026-09-10 09:18:56",
+      "description": "Sell-in, Net Sales, 한계이익, 영업이익 (신/구모델 구분)"
+    },
+    "cpsi": {
+      "status": "READY",
+      "filename": "★ (Final) Y26 Consolidated CPSI.xlsx",
+      "size_mb": 43.65,
+      "last_modified": "2026-08-28 18:41:13",
+      "description": "Sell-out 수량, 유통재고, WOS"
+    },
+    "display": {
+      "status": "READY",
+      "filename": "Channel Inventory Display.xlsx",
+      "size_mb": 0.39,
+      "last_modified": "2026-07-31 13:29:55",
+      "description": "전시수량 및 인치/카테고리 자동 분류"
+    },
+    "inventory": {
+      "status": "READY",
+      "filename": "재고현황(DIO_LTI).xlsb",
+      "size_mb": 10.84,
+      "last_modified": "2026-07-23 17:29:19",
+      "description": "DIO, 장기재고율"
+    },
+    "mi_gfk": {
+      "status": "READY",
+      "filename": "Global) GfK+NPD Monthly Raw_202501_202606.xlsb",
+      "size_mb": 105.17,
+      "last_modified": "2026-08-13 17:12:52",
+      "description": "시장판가(ASP), M/S, 전시지수"
+    }
+  },
+  "target_workbook": {
+    "status": "HEALTHY",
+    "filename": "26년_유럽+CIS_KPI_2026.xlsx",
+    "size_mb": 21.66,
+    "last_modified": "2026-08-31 11:36:08",
+    "sheets_count": 41,
+    "h16_dropdown_active": true
+  },
+  "recommendation": "데이터 오버레이 파이프라인 진행 가능"
+}

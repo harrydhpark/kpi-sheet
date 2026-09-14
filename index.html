@@ -92,7 +92,7 @@
             <div class="flex items-center gap-6">
                 <span class="text-xs font-bold tracking-widest text-slate-400 uppercase" id="header-category-title">EUROPE/CIS TV KPI Dashboard</span>
                 <div class="h-4 w-px bg-slate-200"></div>
-                <p class="text-sm font-semibold text-primary" id="page-indicator">26년 7월 실적 + 8월차 이동</p>
+                <p class="text-sm font-semibold text-primary" id="page-indicator">26년 8월 실적 + 9월차 이동</p>
             </div>
             <div class="flex items-center gap-6">
                 <!-- Year Selector Tabs -->
@@ -403,7 +403,7 @@
             const pageTitle = (currentRegion === 'EU') ? 'EUROPE/CIS' : (currentRegion === 'CIS') ? 'CIS' : meta.kr;
             const bannerTitle = (currentRegion === 'EU') ? '유럽' : (currentRegion === 'CIS') ? 'CIS' : meta.kr;
             document.getElementById('header-category-title').innerText = `${pageTitle} TV KPI Dashboard`;
-            document.getElementById('page-indicator').innerText = '26년 7월 실적 + 8월차 이동';
+            document.getElementById('page-indicator').innerText = '26년 8월 실적 + 9월차 이동';
             document.getElementById('banner-title').innerText = `${bannerTitle} TV Biz. KPI Monitoring Dashboard`;
             
             const rows = kpiData[currentRegion] || [];

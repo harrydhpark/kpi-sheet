@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T09:01:49.597325",
+  "timestamp": "2026-09-22T11:01:37.786570",
   "overall_status": "PASS",
   "raw_sources": {
     "sales_ledger": {
@@ -32,17 +32,17 @@
     },
     "mi_gfk": {
       "status": "READY",
-      "filename": "Global) GfK+NPD Monthly Raw_202501_202606.xlsb",
-      "size_mb": 105.17,
-      "last_modified": "2026-08-13 17:12:52",
+      "filename": "Global) GfK+NPD Monthly Raw_202501_202607.xlsb",
+      "size_mb": 109.92,
+      "last_modified": "2026-09-22 09:26:38",
       "description": "시장판가(ASP), M/S, 전시지수"
     }
   },
   "target_workbook": {
     "status": "HEALTHY",
     "filename": "26년_유럽+CIS_KPI_2026.xlsx",
-    "size_mb": 21.66,
-    "last_modified": "2026-08-31 11:36:08",
+    "size_mb": 19.6,
+    "last_modified": "2026-09-22 10:58:51",
     "sheets_count": 41,
     "h16_dropdown_active": true
   },

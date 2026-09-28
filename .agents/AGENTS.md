@@ -133,5 +133,14 @@ git -c credential.helper='' push gitlab main --progress 2>&1
 - **대시보드(`build_dashboard.js`) 경쟁 지표 동기화 원칙**:
   - 경쟁 지표(83~93행)의 전년 실적(`row.y25`)은 `getAggregatesForRaw`의 단순 합산(ASP 판가 합산 및 M/S 0 처리 오류)을 우회하고, `KPI(26년)` 시트의 2025년 영역(`row.y25_prev`)을 1:1 직접 매핑하여 상반기, 1분기, 2분기 전년 및 전년비(YoY Diff)를 온전하게 산출해야 합니다.
 
-
-
+### 9. CPSI 원천 데이터 갱신 시 시트별 컬럼 오프셋 및 동적 헤더 탐색 규칙
+- **원천 시트 간 컬럼 구조 차이**:
+  - `Master` (TTL): 총 241열 구조로, 중간에 주간 실적 집계 열이 포함되어 2026년 실적/계획 데이터는 **`GL:GW`열 (Col 194~205, idx 193:205)**에 위치합니다. (`FZ:GK`는 2025년 데이터)
+  - `Master_NPI` (신모델) & `Master_EOL` (구모델): 총 225열 구조로, 주간 집계 열이 없어 2026년 데이터가 **`FZ:GK`열 (Col 182~193, idx 181:193)**에 위치합니다.
+- **동적 헤더 스캐너 및 2중 안전 폴백 의무화**:
+  - CPSI 업데이트 스크립트(`update_cpsi_sheet.py`)는 각 시트의 Row 4('26) 및 Row 5(Jan~Dec)를 동적으로 스캔하여 시작 열을 감지해야 합니다.
+  - 헤더 탐색 실패 시 `Master`(193:205, GL:GW) 및 `NPI/EOL`(181:193, FZ:GK)의 2중 안전 기본 오프셋 폴백을 보장해야 합니다.
+- **사전 백업 및 사후 12개월 정합성 자동 검증 (기본 절차)**:
+  - 파일 수정 직전 `backup/26년_유럽+CIS_KPI_2026_pre_cpsi_YYYYMMDD_HHMMSS.xlsx`를 자동 생성합니다.
+  - H16 Data Validation 드롭다운 목록(`restore_h16_data_validations`)을 즉시 복원합니다.
+  - 작업 완료 직후 로컬 버퍼 상에서 `EU TTL` Sell-out 기준 12개월 전수 `신모델 + 구모델 == TTL` 합산 일치 여부를 자동 산출하여 정합성을 최종 보증합니다.

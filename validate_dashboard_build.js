@@ -53,19 +53,21 @@ if (missingRegions.length > 0) {
   console.log(`* 21개 전 법인/지점 데이터 바인딩 확인: [PASS] (21/21)`);
 }
 
-// UI 필수 컨테이너 검사 (3대 테이블: PSI, P&L, Competitor)
+// UI 필수 컨테이너 검사 (3대 테이블: PSI, P&L, Competitor 및 사이드바 기준 시점)
 const hasPsiTable = content.includes('id="table-psi"');
 const hasPnlTable = content.includes('id="table-pnl"');
 const hasCompTable = content.includes('id="table-comp"');
 const hasSidebar = content.includes('EUROPE/CIS TV PORTAL');
+const hasCriteriaTable = content.includes('id="criteria-table"');
 
 console.log(`* 필수 UI 구성요소:`);
 console.log(`  - PSI 테이블 (table-psi): ${hasPsiTable ? 'OK' : 'MISSING'}`);
 console.log(`  - P&L 테이블 (table-pnl): ${hasPnlTable ? 'OK' : 'MISSING'}`);
 console.log(`  - 경쟁지표 테이블 (table-comp): ${hasCompTable ? 'OK' : 'MISSING'}`);
 console.log(`  - 사이드바/포털 타이틀: ${hasSidebar ? 'OK' : 'MISSING'}`);
+console.log(`  - 사이드바 기준 시점 (criteria-table): ${hasCriteriaTable ? 'OK' : 'MISSING'}`);
 
-const tablesOk = hasPsiTable && hasPnlTable && hasCompTable;
+const tablesOk = hasPsiTable && hasPnlTable && hasCompTable && hasCriteriaTable;
 const overallStatus = (sizeValid && entityStatus === "PASS" && tablesOk && hasSidebar) ? "SUCCESS" : "WARNING";
 
 
@@ -79,7 +81,8 @@ const metrics = {
     psi_table: hasPsiTable,
     pnl_table: hasPnlTable,
     comp_table: hasCompTable,
-    portal_sidebar: hasSidebar
+    portal_sidebar: hasSidebar,
+    criteria_table: hasCriteriaTable
   },
 
   preview_url: "http://localhost:4000",

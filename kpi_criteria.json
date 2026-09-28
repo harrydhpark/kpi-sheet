@@ -1,0 +1,62 @@
+[
+  {
+    "indicator": "Sell-in수량",
+    "standard": "8월실적+9월차이동"
+  },
+  {
+    "indicator": "Sell-out수량",
+    "standard": "9/21W주차 실적(9/28W 조회)"
+  },
+  {
+    "indicator": "유통재고",
+    "standard": "9/21W주차 실적(9/28W 조회)"
+  },
+  {
+    "indicator": "WOS(-4)",
+    "standard": "9/21W주차 실적(9/28W 조회)"
+  },
+  {
+    "indicator": "DIO",
+    "standard": "8월실적"
+  },
+  {
+    "indicator": "장기재고율",
+    "standard": "8월실적"
+  },
+  {
+    "indicator": "Gross매출",
+    "standard": "8월실적+9월차이동"
+  },
+  {
+    "indicator": "차감",
+    "standard": "8월실적+9월차이동"
+  },
+  {
+    "indicator": "Net매출",
+    "standard": "8월실적+9월차이동"
+  },
+  {
+    "indicator": "한계이익(금액)",
+    "standard": "8월실적+9월차이동"
+  },
+  {
+    "indicator": "한계이익(%)",
+    "standard": "8월실적+9월차이동"
+  },
+  {
+    "indicator": "영업이익(%)",
+    "standard": "8월실적+9월차이동"
+  },
+  {
+    "indicator": "MI(시장판가,M/S)",
+    "standard": "7월실적"
+  },
+  {
+    "indicator": "전시수량(GDMi)",
+    "standard": "8월실적"
+  },
+  {
+    "indicator": "전시지수(GfK)",
+    "standard": "7월 실적"
+  }
+]

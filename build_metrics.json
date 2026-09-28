@@ -1,14 +1,15 @@
 {
-  "timestamp": "2026-09-28T04:28:55.907Z",
+  "timestamp": "2026-09-28T09:12:49.156Z",
   "status": "SUCCESS",
-  "file_size_mb": 6.67,
+  "file_size_mb": 6.68,
   "regions_verified": 21,
   "missing_regions": [],
   "ui_checks": {
     "psi_table": true,
     "pnl_table": true,
     "comp_table": true,
-    "portal_sidebar": true
+    "portal_sidebar": true,
+    "criteria_table": true
   },
   "preview_url": "http://localhost:4000",
   "deploy_targets": [

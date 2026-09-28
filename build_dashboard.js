@@ -99,6 +99,27 @@ try {
         }
     }
     
+    # Extract criteria sheet (기준 시점) if present
+    try {
+        $sheetCriteria = $wb.Sheets.Item("기준")
+        if ($sheetCriteria) {
+            Write-Host "Extracting criteria sheet (기준)..."
+            $arrCrit = $sheetCriteria.Range("B4:C25").Value2
+            $critList = @()
+            for ($ci = 1; $ci -le $arrCrit.GetLength(0); $ci++) {
+                $ind = $arrCrit.GetValue($ci, 1)
+                $std = $arrCrit.GetValue($ci, 2)
+                if ($ind -and $std) {
+                    $critList += @{ "indicator" = [string]$ind; "standard" = [string]$std }
+                }
+            }
+            $extracted["criteria"] = $critList
+            Write-Host "Extracted $($critList.Count) criteria items."
+        }
+    } catch {
+        Write-Host "Notice: criteria sheet extraction skipped or not found: $_"
+    }
+    
     Write-Host "Writing extracted data to JSON file..."
     if (Test-Path $rawDataJson) { Remove-Item $rawDataJson -Force }
     $extracted | ConvertTo-Json -Depth 5 | Out-File $rawDataJson -Encoding utf8
@@ -146,6 +167,22 @@ try {
   }
 } catch (e) {
   console.warn("Could not load cpsi_oled_qned.json:", e);
+}
+
+// Load criteria dataset (기준 시점)
+let criteriaList = [];
+const criteriaPath = path.join(workspaceDir, "kpi_criteria.json");
+if (rawData.criteria && Array.isArray(rawData.criteria) && rawData.criteria.length > 0) {
+  criteriaList = rawData.criteria;
+  fs.writeFileSync(criteriaPath, JSON.stringify(criteriaList, null, 2), 'utf8');
+  console.log("Updated kpi_criteria.json from extracted workbook criteria data (" + criteriaList.length + " items)");
+} else if (fs.existsSync(criteriaPath)) {
+  try {
+    criteriaList = JSON.parse(fs.readFileSync(criteriaPath, "utf8"));
+    console.log("Loaded existing kpi_criteria.json (" + criteriaList.length + " items)");
+  } catch (e) {
+    console.warn("Could not load kpi_criteria.json:", e);
+  }
 }
 
 // Helper to determine the type of a row based on labels and descriptor
@@ -614,6 +651,16 @@ const regionMeta = {
   'LGEUR': { en: 'Ukraine (우크라이나)', kr: '우크라이나 지점' }
 };
 
+const criteriaRowsHtml = criteriaList.map(item => {
+  return `
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">${item.indicator}</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">${item.standard}</span>
+      </td>
+    </tr>`;
+}).join('');
+
 const htmlTemplate = `<!DOCTYPE html>
 <html class="light" lang="ko">
 <head>
@@ -668,6 +715,11 @@ const htmlTemplate = `<!DOCTYPE html>
         tr:hover .sticky-col { background-color: #f1f5f9; }
         .sticky-col-header { position: sticky; left: 0; top: 0; background-color: #051c2c; color: #ffffff; z-index: 30; }
         th { position: sticky; top: 0; background-color: #051c2c; color: #ffffff; z-index: 20; }
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 2px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.35); }
+        #criteria-table th { position: sticky; top: 0; background-color: #041724; color: rgba(255,255,255,0.5); z-index: 10; }
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -681,7 +733,40 @@ const htmlTemplate = `<!DOCTYPE html>
             <p class="text-[10px] text-white/50 uppercase tracking-[0.2em] font-medium">TV EUROPE/CIS TV PORTAL</p>
         </div>
         
-        <nav class="flex-1 py-6 space-y-4 overflow-y-auto" id="sidebar-nav">
+        <nav class="flex-1 py-4 space-y-3 overflow-y-auto" id="sidebar-nav">
+            <!-- Criteria Section (기준 시점) -->
+            <div class="px-5 mb-2">
+                <div class="bg-white/[0.04] border border-white/10 rounded-xl overflow-hidden shadow-sm">
+                    <button type="button" 
+                            id="btn-criteria-toggle"
+                            onclick="toggleCriteriaAccordion()"
+                            class="w-full flex items-center justify-between px-3.5 py-2.5 text-left hover:bg-white/[0.08] transition-colors group cursor-pointer focus:outline-none">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px] text-emerald-400 group-hover:scale-110 transition-transform">event_note</span>
+                            <span class="text-xs font-bold text-white tracking-wide">기준 시점</span>
+                            <span class="text-[9px] font-semibold px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded">Cut-off</span>
+                        </div>
+                        <span id="criteria-arrow" class="material-symbols-outlined text-[18px] text-white/50 group-hover:text-white transition-transform duration-200">expand_less</span>
+                    </button>
+                    
+                    <div id="criteria-table-container" class="transition-all duration-200 border-t border-white/10">
+                        <div class="max-h-[300px] overflow-y-auto sidebar-scroll">
+                            <table class="w-full text-left border-collapse" id="criteria-table">
+                                <thead>
+                                    <tr class="border-b border-white/10">
+                                        <th class="py-1.5 px-3 text-[10px] font-bold uppercase tracking-wider">지표</th>
+                                        <th class="py-1.5 px-3 text-[10px] font-bold uppercase tracking-wider text-right">기준</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-[11px] divide-y divide-white/5">
+                                    ${criteriaRowsHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Europe HQ -->
             <div>
                 <div class="px-8 py-2 text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Europe HQ (유럽 본부)</div>
@@ -874,9 +959,22 @@ const htmlTemplate = `<!DOCTYPE html>
             return btn;
         }
         
+        function toggleCriteriaAccordion() {
+            const container = document.getElementById('criteria-table-container');
+            const arrow = document.getElementById('criteria-arrow');
+            if (!container || !arrow) return;
+            if (container.classList.contains('hidden')) {
+                container.classList.remove('hidden');
+                arrow.textContent = 'expand_less';
+            } else {
+                container.classList.add('hidden');
+                arrow.textContent = 'expand_more';
+            }
+        }
+        
         function selectRegion(code) {
             currentRegion = code;
-            document.querySelectorAll('#sidebar-nav button').forEach(btn => {
+            document.querySelectorAll('#sidebar-nav button[class*="sidebar-btn-"]').forEach(btn => {
                 btn.classList.remove('active', 'bg-white/10', 'font-bold', 'border-r-4', 'border-r-white');
                 btn.classList.add('text-white/70');
             });

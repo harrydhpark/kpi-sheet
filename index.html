@@ -52,6 +52,11 @@
         tr:hover .sticky-col { background-color: #f1f5f9; }
         .sticky-col-header { position: sticky; left: 0; top: 0; background-color: #051c2c; color: #ffffff; z-index: 30; }
         th { position: sticky; top: 0; background-color: #051c2c; color: #ffffff; z-index: 20; }
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 2px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.35); }
+        #criteria-table th { position: sticky; top: 0; background-color: #041724; color: rgba(255,255,255,0.5); z-index: 10; }
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -65,7 +70,130 @@
             <p class="text-[10px] text-white/50 uppercase tracking-[0.2em] font-medium">TV EUROPE/CIS TV PORTAL</p>
         </div>
         
-        <nav class="flex-1 py-6 space-y-4 overflow-y-auto" id="sidebar-nav">
+        <nav class="flex-1 py-4 space-y-3 overflow-y-auto" id="sidebar-nav">
+            <!-- Criteria Section (기준 시점) -->
+            <div class="px-5 mb-2">
+                <div class="bg-white/[0.04] border border-white/10 rounded-xl overflow-hidden shadow-sm">
+                    <button type="button" 
+                            id="btn-criteria-toggle"
+                            onclick="toggleCriteriaAccordion()"
+                            class="w-full flex items-center justify-between px-3.5 py-2.5 text-left hover:bg-white/[0.08] transition-colors group cursor-pointer focus:outline-none">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px] text-emerald-400 group-hover:scale-110 transition-transform">event_note</span>
+                            <span class="text-xs font-bold text-white tracking-wide">기준 시점</span>
+                            <span class="text-[9px] font-semibold px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded">Cut-off</span>
+                        </div>
+                        <span id="criteria-arrow" class="material-symbols-outlined text-[18px] text-white/50 group-hover:text-white transition-transform duration-200">expand_less</span>
+                    </button>
+                    
+                    <div id="criteria-table-container" class="transition-all duration-200 border-t border-white/10">
+                        <div class="max-h-[300px] overflow-y-auto sidebar-scroll">
+                            <table class="w-full text-left border-collapse" id="criteria-table">
+                                <thead>
+                                    <tr class="border-b border-white/10">
+                                        <th class="py-1.5 px-3 text-[10px] font-bold uppercase tracking-wider">지표</th>
+                                        <th class="py-1.5 px-3 text-[10px] font-bold uppercase tracking-wider text-right">기준</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-[11px] divide-y divide-white/5">
+                                    
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">Sell-in수량</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">8월실적+9월차이동</span>
+      </td>
+    </tr>
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">Sell-out수량</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">9/21W주차 실적(9/28W 조회)</span>
+      </td>
+    </tr>
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">유통재고</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">9/21W주차 실적(9/28W 조회)</span>
+      </td>
+    </tr>
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">WOS(-4)</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">9/21W주차 실적(9/28W 조회)</span>
+      </td>
+    </tr>
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">DIO</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">8월실적</span>
+      </td>
+    </tr>
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">장기재고율</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">8월실적</span>
+      </td>
+    </tr>
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">Gross매출</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">8월실적+9월차이동</span>
+      </td>
+    </tr>
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">차감</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">8월실적+9월차이동</span>
+      </td>
+    </tr>
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">Net매출</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">8월실적+9월차이동</span>
+      </td>
+    </tr>
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">한계이익(금액)</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">8월실적+9월차이동</span>
+      </td>
+    </tr>
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">한계이익(%)</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">8월실적+9월차이동</span>
+      </td>
+    </tr>
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">영업이익(%)</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">8월실적+9월차이동</span>
+      </td>
+    </tr>
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">MI(시장판가,M/S)</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">7월실적</span>
+      </td>
+    </tr>
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">전시수량(GDMi)</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">8월실적</span>
+      </td>
+    </tr>
+    <tr class="hover:bg-white/[0.04] transition-colors">
+      <td class="py-1.5 px-3 text-[11px] font-medium text-white/85 whitespace-nowrap">전시지수(GfK)</td>
+      <td class="py-1.5 px-3 text-[10px] text-right">
+        <span class="inline-block px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-950/60 border border-emerald-500/20 font-mono tracking-tight leading-tight whitespace-nowrap">7월 실적</span>
+      </td>
+    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Europe HQ -->
             <div>
                 <div class="px-8 py-2 text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Europe HQ (유럽 본부)</div>
@@ -258,9 +386,22 @@
             return btn;
         }
         
+        function toggleCriteriaAccordion() {
+            const container = document.getElementById('criteria-table-container');
+            const arrow = document.getElementById('criteria-arrow');
+            if (!container || !arrow) return;
+            if (container.classList.contains('hidden')) {
+                container.classList.remove('hidden');
+                arrow.textContent = 'expand_less';
+            } else {
+                container.classList.add('hidden');
+                arrow.textContent = 'expand_more';
+            }
+        }
+        
         function selectRegion(code) {
             currentRegion = code;
-            document.querySelectorAll('#sidebar-nav button').forEach(btn => {
+            document.querySelectorAll('#sidebar-nav button[class*="sidebar-btn-"]').forEach(btn => {
                 btn.classList.remove('active', 'bg-white/10', 'font-bold', 'border-r-4', 'border-r-white');
                 btn.classList.add('text-white/70');
             });

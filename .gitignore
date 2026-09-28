@@ -9,4 +9,5 @@ firepit-log.txt
 .firebase/
 ~$*
 backup/
-
+__pycache__/
+*.pyc

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-09-28T10:56:57.456212",
+  "last_updated": "2026-09-28T11:13:20.603284",
   "backup_file": "backup/26년_유럽+CIS_KPI_2026_backup_20260914.xlsx",
   "steps": {
     "backup": {
@@ -9,7 +9,7 @@
     },
     "dataops_validation": {
       "status": "COMPLETED",
-      "timestamp": "2026-09-28T10:56:56.732802",
+      "timestamp": "2026-09-28T11:13:19.901269",
       "message": "원천 데이터 및 H16 드롭다운 검증 통과"
     },
     "dataops_sales_update": {
@@ -19,12 +19,12 @@
     },
     "devops_build": {
       "status": "COMPLETED",
-      "timestamp": "2026-09-28T10:56:56.900200",
+      "timestamp": "2026-09-28T11:13:20.069676",
       "message": "index.html 21개 법인 및 필수 테이블 무결성 검증 완료"
     },
     "bi_analysis": {
       "status": "COMPLETED",
-      "timestamp": "2026-09-28T10:56:57.456212",
+      "timestamp": "2026-09-28T11:13:20.603284",
       "message": "21개 법인 실적 진단 및 이상치 감지 리포트 생성 완료"
     }
   }

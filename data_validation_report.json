@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-28T10:56:50.558239",
+  "timestamp": "2026-09-28T11:13:13.744293",
   "overall_status": "PASS",
   "raw_sources": {
     "sales_ledger": {
@@ -41,8 +41,8 @@
   "target_workbook": {
     "status": "HEALTHY",
     "filename": "26년_유럽+CIS_KPI_2026.xlsx",
-    "size_mb": 19.6,
-    "last_modified": "2026-09-28 10:53:17",
+    "size_mb": 19.51,
+    "last_modified": "2026-09-28 11:10:51",
     "sheets_count": 41,
     "h16_dropdown_active": true
   },

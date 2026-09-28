@@ -148,3 +148,8 @@ git -c credential.helper='' push gitlab main --progress 2>&1
   - H16 Data Validation 드롭다운 목록(`restore_h16_data_validations`)을 즉시 복원합니다.
   - 작업 완료 직후 로컬 버퍼 상에서 `EU TTL` Sell-out 기준 2025년 및 2026년 12개월 전수 `신모델 + 구모델 == TTL` 합산 일치 여부를 자동 산출하여 정합성을 최종 보증합니다.
 
+### 10. 대시보드 Sell-out 하위 OLED(24.1) & QNED(24.2) CPSI 원천 데이터 직접 바인딩
+- **원천 동기화 표준**: 대시보드 PSI 테이블의 Sell-out 하위 OLED(24.1) 및 QNED(24.2) 가상 행은 과거 `Sell-out집계` 시트 참조를 일체 배제하고, `CPSI(TTL)` 시트 및 Consolidated CPSI Master 시트의 법인별 공식 OLED/QNED 실적(`cpsi_oled_qned.json`)에서 직접 1:1 바인딩합니다.
+- **다년도 실적 보장**: 2024년(Col 7~18), 2025년(Col 20~31), 2026년(Col 33~44) 12개월 실적이 모두 반영되며, 연간 합산(TTL) 및 YoY 전년비가 원천 데이터와 100% 일치합니다.
+- **Swiss 등 하드코딩 제거**: 과거 임시 하드코딩 배열을 완전 제거하고, 17개 전 유럽 법인/지점의 공식 CPSI 데이터를 동적으로 산출합니다.
+

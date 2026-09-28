@@ -12,22 +12,28 @@ const rawDataJson = path.join(tempDir, "temp_raw_data.json");
 const psScriptPath = path.join(tempDir, "extract.ps1");
 const finalHtmlPath = path.join(workspaceDir, "index.html");
 
-console.log("=== STEP 1: Excel COM Batch Data Extraction ===");
+const skipExtract = process.argv.includes('--skip-extract') || process.argv.includes('--no-extract');
 
-// Force kill Excel first to ensure no locks
-try {
-  console.log("Killing any existing Excel processes...");
-  execSync('powershell -Command "Get-Process excel -ErrorAction SilentlyContinue | Stop-Process -Force"', { stdio: 'ignore' });
-} catch (e) {
-  // Ignore
-}
+if (skipExtract && fs.existsSync(rawDataJson)) {
+  console.log("Skipping Excel COM extraction as requested (--skip-extract). Using existing:", rawDataJson);
+} else {
+  console.log("=== STEP 1: Excel COM Batch Data Extraction ===");
 
-console.log("Copying original workbook to temp path...");
-if (fs.existsSync(tempInput)) {
-  fs.unlinkSync(tempInput);
+  // Force kill Excel first to ensure no locks
+  try {
+    console.log("Killing any existing Excel processes...");
+    execSync('powershell -Command "Get-Process excel -ErrorAction SilentlyContinue | Stop-Process -Force"', { stdio: 'ignore' });
+  } catch (e) {
+    // Ignore
+  }
+
+  console.log("Copying original workbook to temp path...");
+  if (fs.existsSync(tempInput)) {
+    fs.unlinkSync(tempInput);
+  }
+  fs.copyFileSync(originalFile, tempInput);
+  console.log("Copied to:", tempInput);
 }
-fs.copyFileSync(originalFile, tempInput);
-console.log("Copied to:", tempInput);
 
 const regions = [
   'LGEAG', 'LGEBN', 'LGECK', 'LGEDG', 'Swiss', 'LGEES', 
@@ -108,17 +114,19 @@ finally {
 }
 `;
 
-// Write with UTF-8 BOM
-fs.writeFileSync(psScriptPath, '\ufeff' + psScriptContent, 'utf8');
-console.log("Created PowerShell script with BOM at:", psScriptPath);
+if (!skipExtract || !fs.existsSync(rawDataJson)) {
+  // Write with UTF-8 BOM
+  fs.writeFileSync(psScriptPath, '\ufeff' + psScriptContent, 'utf8');
+  console.log("Created PowerShell script with BOM at:", psScriptPath);
 
-console.log("Executing PowerShell extraction script...");
-try {
-  const output = execSync(`powershell -ExecutionPolicy Bypass -File "${psScriptPath}"`, { encoding: 'utf8' });
-  console.log("PowerShell Output:\n", output);
-} catch (err) {
-  console.error("PowerShell failed:", err.stdout || err.message);
-  process.exit(1);
+  console.log("Executing PowerShell extraction script...");
+  try {
+    const output = execSync(`powershell -ExecutionPolicy Bypass -File "${psScriptPath}"`, { encoding: 'utf8' });
+    console.log("PowerShell Output:\n", output);
+  } catch (err) {
+    console.error("PowerShell failed:", err.stdout || err.message);
+    process.exit(1);
+  }
 }
 
 console.log("=== STEP 2: Parser and Expansion Engine ===");
@@ -127,6 +135,18 @@ if (jsonStr.startsWith('\ufeff')) {
   jsonStr = jsonStr.slice(1);
 }
 const rawData = JSON.parse(jsonStr);
+
+// Load official CPSI OLED & QNED dataset if available
+let cpsiOledQned = null;
+try {
+  const cpsiPath = path.join(workspaceDir, "cpsi_oled_qned.json");
+  if (fs.existsSync(cpsiPath)) {
+    cpsiOledQned = JSON.parse(fs.readFileSync(cpsiPath, "utf8"));
+    console.log("Loaded official CPSI OLED & QNED data from cpsi_oled_qned.json");
+  }
+} catch (e) {
+  console.warn("Could not load cpsi_oled_qned.json:", e);
+}
 
 // Helper to determine the type of a row based on labels and descriptor
 function getRowType(labels) {
@@ -313,11 +333,64 @@ regions.forEach(region => {
     }
   });
   
-  // Sum Sell-out OLED and QNED virtual rows
+  // Official CPSI Sell-out OLED (24.1) and QNED (24.2) virtual rows
+  const cpsiDataForRegion = cpsiOledQned && cpsiOledQned[region];
   const row198 = rowsList.find(r => r.index === 198);
   const row248 = rowsList.find(r => r.index === 248);
   const row213 = rowsList.find(r => r.index === 213);
   const row260 = rowsList.find(r => r.index === 260);
+
+  function createCpsiVirtualRow(category, newIndex, newLabels) {
+    const catData = cpsiDataForRegion && cpsiDataForRegion[category];
+    const hasCpsi25 = catData && catData.y25_raw && catData.y25_raw.some(v => v !== 0);
+    const hasCpsi26 = catData && catData.y26_raw && catData.y26_raw.some(v => v !== 0);
+
+    if (hasCpsi25 || hasCpsi26) {
+      const y26_agg = getAggregatesForRaw(catData.y26_raw, 'n');
+      const y25_agg = getAggregatesForRaw(catData.y25_raw, 'n');
+      const y24_agg = getAggregatesForRaw(catData.y24_raw || new Array(13).fill(0), 'n');
+
+      const vRow = {
+        index: newIndex,
+        labels: newLabels,
+        type: 'n',
+        y26: y26_agg,
+        y25_prev: [...y25_agg],
+        y26_yoy: new Array(18).fill(null),
+        y25_raw: [...catData.y25_raw],
+        y24_raw: [...(catData.y24_raw || new Array(13).fill(0))],
+        y25: y25_agg,
+        y24: y24_agg,
+        y25_yoy: new Array(18).fill(null)
+      };
+
+      for (let c = 0; c < 18; c++) {
+        const v26 = vRow.y26[c];
+        const v25p = vRow.y25_prev[c];
+        if (v25p && v25p !== 0 && v26 !== null) {
+          vRow.y26_yoy[c] = (v26 / v25p - 1) * 100;
+        } else {
+          vRow.y26_yoy[c] = null;
+        }
+
+        const v25 = vRow.y25[c];
+        const v24 = vRow.y24[c];
+        if (v24 && v24 !== 0 && v25 !== null) {
+          vRow.y25_yoy[c] = (v25 / v24 - 1) * 100;
+        } else {
+          vRow.y25_yoy[c] = null;
+        }
+      }
+      return vRow;
+    }
+
+    // Fallback to sumRows if CPSI data not available (e.g. CIS)
+    if (category === 'OLED') {
+      return sumRows(row198, row248, newIndex, newLabels, 'n');
+    } else {
+      return sumRows(row213, row260, newIndex, newLabels, 'n');
+    }
+  }
 
   function sumRows(rowA, rowB, newIndex, newLabels, newType) {
     const sumRow = {
@@ -346,23 +419,9 @@ regions.forEach(region => {
       }
     });
 
-    // Fallback sumRow.y25 to sumRow.y25_prev if sumRow.y25 is empty
     const hasSumY25 = sumRow.y25.some(v => v !== null && v !== 0);
     if (!hasSumY25 && sumRow.y25_prev.some(v => v !== null && v !== 0)) {
       sumRow.y25 = [...sumRow.y25_prev];
-    }
-
-    // Special CPSI Fallback for Swiss OLED (24.1) and QNED (24.2)
-    if (region === 'Swiss') {
-      if (newIndex === 24.1 && !sumRow.y25_prev.some(v => v !== null && v !== 0)) {
-        const swissOled2025Raw = [2836, 2891, 2184, 2058, 2556, 5614, 3754, 0, 3639, 2289, 2293, 2798, 32912];
-        sumRow.y25_prev = getAggregatesForRaw(swissOled2025Raw, 'n');
-        sumRow.y25 = [...sumRow.y25_prev];
-      } else if (newIndex === 24.2 && !sumRow.y25_prev.some(v => v !== null && v !== 0)) {
-        const swissQned2025Raw = [461, 385, 505, 754, 954, 2036, 1296, 0, 1296, 727, 822, 569, 9805];
-        sumRow.y25_prev = getAggregatesForRaw(swissQned2025Raw, 'n');
-        sumRow.y25 = [...sumRow.y25_prev];
-      }
     }
     
     for (let c = 0; c < 18; c++) {
@@ -391,14 +450,10 @@ regions.forEach(region => {
   const idx24 = rowsList.findIndex(r => r.index === 24);
   if (idx24 !== -1) {
     const virtualRows = [];
-    if (row198 || row248) {
-      const oledSumRow = sumRows(row198, row248, 24.1, [null, null, "OLED", null, null], 'n');
-      virtualRows.push(oledSumRow);
-    }
-    if (row213 || row260) {
-      const qnedSumRow = sumRows(row213, row260, 24.2, [null, null, "QNED", null, null], 'n');
-      virtualRows.push(qnedSumRow);
-    }
+    const oledRow = createCpsiVirtualRow('OLED', 24.1, [null, null, "OLED", null, null]);
+    if (oledRow) virtualRows.push(oledRow);
+    const qnedRow = createCpsiVirtualRow('QNED', 24.2, [null, null, "QNED", null, null]);
+    if (qnedRow) virtualRows.push(qnedRow);
     rowsList.splice(idx24 + 1, 0, ...virtualRows);
   }
 
@@ -432,7 +487,7 @@ function getAggregatesForRaw(vals, type, sheetRowNumber) {
     result[14] = q2;
     result[15] = q3;
     result[16] = q4;
-    result[17] = vals[12];
+    result[17] = (vals[12] !== undefined && vals[12] !== null) ? vals[12] : (h1 + q3 + q4);
   } else if (type === 'w' || type === 'i') {
     result[6] = vals[5];
     result[13] = vals[2];

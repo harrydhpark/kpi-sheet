@@ -121,9 +121,10 @@ def step2_inject_and_recalc(data):
     temp_in = os.path.join(temp_dir, f"kpi_work_in_{os.getpid()}.xlsx")
     temp_out = os.path.join(temp_dir, f"kpi_work_out_{os.getpid()}.xlsx")
     
-    # 1. Copy backup to temp_in
-    print("Copying clean backup to local SSD...")
-    shutil.copyfile(BACKUP_WORKBOOK, temp_in)
+    # 1. Copy workbook to temp_in
+    source_wb = BACKUP_WORKBOOK if os.path.exists(BACKUP_WORKBOOK) else TARGET_WORKBOOK
+    print(f"Copying {os.path.basename(source_wb)} to local SSD...")
+    shutil.copyfile(source_wb, temp_in)
     
     # 2. Inject with openpyxl
     print("Injecting AL (Col 38) and BZ (Col 78) with openpyxl...")

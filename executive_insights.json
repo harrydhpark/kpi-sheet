@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-28T11:13:20.559549",
+  "timestamp": "2026-09-28T11:58:35.095555",
   "summary": {
     "europe_hq": {
       "net_sales_m": 1254.4,
@@ -8,7 +8,7 @@
       "op_yoy_diff_m": 89.1,
       "opm_percent": 5.7,
       "margin_rate_percent": 26.0,
-      "wos_weeks": 7.9,
+      "wos_weeks": 8.9,
       "npi_mix_percent": 15.1
     },
     "cis_hq": {
@@ -39,6 +39,14 @@
       "indicator": "OPM",
       "value": -0.4,
       "message": "[LGEFS] 영업이익률 마이너스(-0.4%) 적자 전환. 판가 및 차감율 긴급 점검 필요."
+    },
+    {
+      "level": "CRITICAL",
+      "category": "INVENTORY",
+      "entity": "LGEPT",
+      "indicator": "WOS",
+      "value": 3.8,
+      "message": "[LGEPT] 유통재고 WOS가 3.8주로 안전재고(4주) 미달. 공급 조기 배정 필요."
     },
     {
       "level": "CRITICAL",
@@ -109,30 +117,30 @@
     ],
     "risk_wos": [
       {
-        "entity": "LGERO",
-        "wos": 12.9
+        "entity": "LGEFS",
+        "wos": 13.5
+      },
+      {
+        "entity": "LGEPL",
+        "wos": 12.6
       },
       {
         "entity": "LGEAK",
         "wos": 12.3
       },
       {
-        "entity": "LGEPL",
-        "wos": 11.0
+        "entity": "Swiss",
+        "wos": 11.8
       },
       {
-        "entity": "LGEES",
-        "wos": 9.9
-      },
-      {
-        "entity": "LGEFS",
-        "wos": 9.4
+        "entity": "LGEIS",
+        "wos": 11.8
       }
     ]
   },
   "strategic_recommendations": [
     "신모델(Y26 OLED G6/C6) 믹스 개선을 통한 고마진 구조(한계이익률 29%대) 지속 유지",
-    "WOS 주의 법인(없음) 대상 이월 구모델 집중 클리어런스 실행",
+    "WOS 주의 법인(LGEPT) 대상 이월 구모델 집중 클리어런스 실행",
     "독일/영국 등 핵심 대형 법인의 Sell-out 가속을 위한 유통사 공동 마케팅 펀드 우선 배정"
   ]
 }

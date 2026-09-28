@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-22T11:01:37.786570",
+  "timestamp": "2026-09-28T10:56:50.558239",
   "overall_status": "PASS",
   "raw_sources": {
     "sales_ledger": {
@@ -12,8 +12,8 @@
     "cpsi": {
       "status": "READY",
       "filename": "★ (Final) Y26 Consolidated CPSI.xlsx",
-      "size_mb": 43.65,
-      "last_modified": "2026-08-28 18:41:13",
+      "size_mb": 46.78,
+      "last_modified": "2026-09-28 10:30:33",
       "description": "Sell-out 수량, 유통재고, WOS"
     },
     "display": {
@@ -42,7 +42,7 @@
     "status": "HEALTHY",
     "filename": "26년_유럽+CIS_KPI_2026.xlsx",
     "size_mb": 19.6,
-    "last_modified": "2026-09-22 10:58:51",
+    "last_modified": "2026-09-28 10:53:17",
     "sheets_count": 41,
     "h16_dropdown_active": true
   },
